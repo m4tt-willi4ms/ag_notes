@@ -4,6 +4,11 @@
 format: jb-book
 root: index
 chapters:
-- file: markdown
-- file: notebooks
-- file: markdown-notebooks
+# - file: markdown
+# - file: notebooks
+- file: polyinvars
+- file: tetra
+- file: octahedral
+- file: icosahedron
+- file: dodeca
+- file: bibliography
