@@ -1,5 +1,7 @@
 from itertools import combinations
-from sympy import Matrix, Poly, fraction, sqrt
+from math import isclose
+
+from sympy import I, N, Matrix, Poly, conjugate, fraction, im, re, simplify, sqrt
 
 
 def phi_simp(expr, phi):
@@ -50,6 +52,21 @@ def n_simp(expr, N):
     return (num / denom).as_expr()
 
 
+def e_simp(expr, e, full=True, cleanup=True):
+    result = Poly(expr, e)
+    e_coeffs = reversed(result.all_coeffs())
+    simp_coeffs = [0] * 5
+    # enforce e**5 = 1
+    for i, coeff in enumerate(e_coeffs):
+        simp_coeffs[i % 5] += coeff
+    # enforce e**4 = - e**3 - e**2 - e - 1
+    if full:
+        simp_coeffs = [simp_coeffs[i] - simp_coeffs[4] for i in range(4)]
+    if cleanup:
+        return simplify(Poly.from_list(reversed(simp_coeffs), e).as_expr())
+    return Poly.from_list(reversed(simp_coeffs), e).as_expr()
+
+
 def tetrahedral_angle_check(vs, phi, N):
     vals = []
     for v1, v2 in combinations(vs, 2):
@@ -59,3 +76,25 @@ def tetrahedral_angle_check(vs, phi, N):
             v1.dot(v2).subs(phi, (1 + sqrt(5)) / 2).subs(N, sqrt(3)).equals(-1 / 3)
         )
     return all(vals)
+
+
+def dot_product_from_complex_vals(z1, z2):
+    r1 = 1 + z1 * conjugate(z1)
+    x1 = (z1 + conjugate(z1)) / r1
+    y1 = I * (z1 - conjugate(z1)) / r1
+    z1 = (z1 * conjugate(z1) - 1) / r1
+    r2 = 1 + z2 * conjugate(z2)
+    x2 = (z2 + conjugate(z2)) / r2
+    y2 = I * (z2 - conjugate(z2)) / r2
+    z2 = (z2 * conjugate(z2) - 1) / r2
+    return x1 * x2 + y1 * y2 + z1 * z2
+
+
+def complex_tetrahedral_angle_check(z1, z2):
+    dp = dot_product_from_complex_vals(z1, z2)
+    dp_evalf = N(dp, 5)
+    print(dp_evalf)
+    if not isclose(im(dp_evalf), 0.0, abs_tol=1e-5):
+        return False
+    else:
+        return isclose(re(dp_evalf), -1 / 3, abs_tol=1e-4)

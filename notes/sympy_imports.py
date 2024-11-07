@@ -15,4 +15,6 @@ from sympy import (
     sin,
     oo,
     pi,
+    trigsimp,
+    expand_trig,
 )
