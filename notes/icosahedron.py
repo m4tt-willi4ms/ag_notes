@@ -1,7 +1,6 @@
-# Check of the above:
 from functools import reduce
 from utils import e_simp
-from sympy_imports import *
+from sympy import I, Poly, cos, oo, simplify, sin, symbols, tan
 
 
 def reduce_multiply(any_list):
