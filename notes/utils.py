@@ -93,8 +93,11 @@ def dot_product_from_complex_vals(z1, z2):
 def complex_tetrahedral_angle_check(z1, z2):
     dp = dot_product_from_complex_vals(z1, z2)
     dp_evalf = N(dp, 5)
-    print(dp_evalf)
-    if not isclose(im(dp_evalf), 0.0, abs_tol=1e-5):
+    try:
+        if not isclose(im(dp_evalf), 0.0, abs_tol=1e-5):
+            return False
+        else:
+            return isclose(re(dp_evalf), -1 / 3, abs_tol=1e-4)
+    except TypeError as e:
+        print(f"Failed: {z1}, {z2}")
         return False
-    else:
-        return isclose(re(dp_evalf), -1 / 3, abs_tol=1e-4)
