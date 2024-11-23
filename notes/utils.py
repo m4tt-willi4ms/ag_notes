@@ -101,3 +101,24 @@ def complex_tetrahedral_angle_check(z1, z2):
     except TypeError as e:
         print(f"Failed: {z1}, {z2}")
         return False
+
+
+def z_simp(expr, z_n):
+    poly = Poly(expr, z_n)
+    coeffs = poly.all_coeffs()
+    while len(coeffs) > 2:
+        top_factor = coeffs[0]
+        coeffs[1] -= top_factor
+        coeffs[2] += top_factor
+        coeffs.pop(0)
+    return Poly.from_list(coeffs, z_n).as_expr()
+
+
+def k_simp(expr, k, z_n):
+    poly = Poly(expr, k)
+    coeffs = poly.all_coeffs()
+    while len(coeffs) > 2:
+        top_factor = coeffs[0]
+        coeffs[2] += 3 * (3 + z_n) * top_factor
+        coeffs.pop(0)
+    return Poly.from_list(coeffs, k).as_expr()
