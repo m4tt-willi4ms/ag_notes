@@ -1,7 +1,12 @@
+from functools import reduce
 from itertools import combinations
 from math import isclose
 
-from sympy import I, N, Matrix, Poly, conjugate, fraction, im, re, simplify, sqrt
+from sympy import I, Matrix, N, Poly, conjugate, fraction, im, re, simplify, sqrt
+
+
+def reduce_multiply(any_list):
+    return reduce(lambda x, y: x * y, any_list)
 
 
 def phi_simp(expr, phi):
@@ -122,3 +127,12 @@ def k_simp(expr, k, z_n):
         coeffs[2] += 3 * (3 + z_n) * top_factor
         coeffs.pop(0)
     return Poly.from_list(coeffs, k).as_expr()
+
+def j_simp(expr, j, z_n):
+    poly = Poly(expr, j)
+    coeffs = poly.all_coeffs()
+    while len(coeffs) > 2:
+        top_factor = coeffs[0]
+        coeffs[2] += (2 - z_n) * top_factor
+        coeffs.pop(0)
+    return Poly.from_list(coeffs, j).as_expr()
