@@ -3,7 +3,8 @@
 
 title: Algebraic Geometry Notes
 author: <a href="https://m4tt.willi4ms.ca" target="_blank">M. Williams</a>
-copyright: "2024"  # Copyright year to be placed in the footer
+copyright: "2025"  # Copyright year to be placed in the footer
+only_build_toc_files        : true
 
 # Force re-execution of notebooks on each build.
 # See https://jupyterbook.org/content/execute.html
