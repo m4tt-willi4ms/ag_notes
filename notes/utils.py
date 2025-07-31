@@ -136,3 +136,18 @@ def j_simp(expr, j, z_n):
         coeffs[2] += (2 - z_n) * top_factor
         coeffs.pop(0)
     return Poly.from_list(coeffs, j).as_expr()
+
+
+def two_simp(expr, i, full=True, cleanup=True):
+    result = Poly(expr, i)
+    e_coeffs = reversed(result.all_coeffs())
+    simp_coeffs = [0] * 3
+    # enforce i**3 = 1
+    for k, coeff in enumerate(e_coeffs):
+        simp_coeffs[k % 3] += coeff
+    # enforce i**2 = - i - 1
+    if full:
+        simp_coeffs = [simp_coeffs[i] - simp_coeffs[2] for i in range(2)]
+    if cleanup:
+        return simplify(Poly.from_list(reversed(simp_coeffs), i).as_expr())
+    return Poly.from_list(reversed(simp_coeffs), i).as_expr()
