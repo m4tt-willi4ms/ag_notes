@@ -1,1 +1,1 @@
-uv run jupyter-book build notes
+uv run jupyter-book build notes --all

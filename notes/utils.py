@@ -2,7 +2,7 @@ from functools import reduce
 from itertools import combinations
 from math import isclose
 
-from sympy import I, Matrix, N, Poly, conjugate, fraction, im, re, simplify, sqrt
+from sympy import I, Matrix, N, Poly, conjugate, diff, fraction, im, re, simplify, sqrt
 
 
 def reduce_multiply(any_list):
@@ -107,6 +107,11 @@ def complex_tetrahedral_angle_check(z1, z2):
         print(f"Failed: {z1}, {z2}")
         return False
 
+def combo_complex_tetrahedral_angle_check(zs):
+    checks = []
+    for z1, z2 in combinations(zs, 2):
+        checks.append(complex_tetrahedral_angle_check(z1, z2))
+    return all(checks)
 
 def z_simp(expr, z_n):
     poly = Poly(expr, z_n)
@@ -151,3 +156,12 @@ def two_simp(expr, i, full=True, cleanup=True):
     if cleanup:
         return simplify(Poly.from_list(reversed(simp_coeffs), i).as_expr())
     return Poly.from_list(reversed(simp_coeffs), i).as_expr()
+
+def hessian(f, u, v):
+    du2 = diff(diff(f, u), u)
+    dudv = diff(diff(f, u), v)
+    dv2 = diff(diff(f, v), v)
+    return du2 * dv2 - dudv**2
+
+def jacobian(f, g, u, v):
+    return diff(f, u) * diff(g, v) - diff(f, v) * diff(g, u)
