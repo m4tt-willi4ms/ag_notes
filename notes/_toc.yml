@@ -12,4 +12,5 @@ chapters:
 - file: icosahedron
 - file: dodeca
 - file: solving_quintics
+- file: hypergeom
 - file: bibliography
