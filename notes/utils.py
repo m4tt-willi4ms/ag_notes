@@ -1,8 +1,23 @@
+import copy
 from functools import reduce
 from itertools import combinations
 from math import isclose
 
-from sympy import I, Matrix, N, Poly, conjugate, diff, fraction, im, re, simplify, sqrt
+from sympy import (
+    I,
+    Matrix,
+    N,
+    Poly,
+    conjugate,
+    diff,
+    fraction,
+    im,
+    re,
+    series,
+    simplify,
+    sqrt,
+    symbols,
+)
 
 
 def reduce_multiply(any_list):
@@ -165,3 +180,63 @@ def hessian(f, u, v):
 
 def jacobian(f, g, u, v):
     return diff(f, u) * diff(g, v) - diff(f, v) * diff(g, u)
+
+
+def _taylor_expand_and_simplify(f, x, eps, xval, n=1):
+
+    expr = series(f.subs(x, x + eps), eps, 0, n=n)
+    expr = expr.removeO()
+    expr = simplify(expr).expand().collect(eps)
+
+    e, k, j, z_n = symbols("e k j z_n")
+
+    expr = Poly(expr, eps)
+    new_coeffs = []
+    for c in expr.all_coeffs()[::-1]:
+        # print(c)
+        new_coeffs.append(
+            e_simp(
+                z_simp(
+                    k_simp(j_simp(c.subs(x, xval).expand(), j, z_n), k, z_n),
+                    z_n,
+                ),
+                e,
+            )
+        )
+        # print(new_coeffs)
+    return Poly.from_list(new_coeffs[::-1], eps).as_expr()
+
+
+def _rationalize_denom(num, denom):
+    k, j, z_n = symbols("k j z_n")
+    factors = []
+    new_denom = copy.deepcopy(denom)
+    if new_denom.has(k):
+        factor = new_denom.subs(k, -k)
+        new_denom = k_simp((new_denom * factor).expand(), k, z_n)
+        factors.append(factor)
+    if new_denom.has(j):
+        factor = new_denom.subs(j, -j)
+        new_denom = j_simp((new_denom * factor).expand(), j, z_n)
+        factors.append(factor)
+    if new_denom.has(z_n):
+        factor = new_denom.subs(z_n, -1 - z_n)
+        new_denom = z_simp((new_denom * factor).expand(), z_n)
+        factors.append(factor)
+    new_num = reduce_multiply([num] + factors)
+    new_num = z_simp(k_simp(new_num, k, z_n), z_n)
+    return new_num / new_denom
+
+
+def rationalize_denom(f):
+    return _rationalize_denom(*fraction(f))
+
+
+def expand_invariant_about_point(f, u, v, x, eps, xval, n_num=4, n_denom=1):
+    num, denom = fraction(f.subs(u, x).subs(v, 1))
+
+    new_num = _taylor_expand_and_simplify(num, x, eps, xval, n=n_num)
+    new_denom = _taylor_expand_and_simplify(denom, x, eps, xval, n=n_denom)
+
+    new_f = _rationalize_denom(new_num, new_denom)
+    return _taylor_expand_and_simplify(new_f, x, eps, xval, n=n_num)
