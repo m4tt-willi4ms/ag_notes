@@ -1,9 +1,6 @@
 version: 1
 project:
-  title: Algebraic Geometry Notes
-  authors:
-    - name: <a href="https://m4tt.willi4ms.ca" target="_blank">M. Williams</a>
-  copyright: '2025'
+  title: Introduction
   github: m4tt-willi4ms/ag_notes
   bibliography:
     - references.bib
@@ -25,4 +22,8 @@ site:
   options:
     favicon: _static/favicon.ico
     folders: true
+    logo_text: "Algebraic Geometry Notes"
   template: book-theme
+  parts:
+    primary_sidebar_footer: primary-sidebar-footer.md
+    footer: footer.md
