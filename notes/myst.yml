@@ -1,0 +1,28 @@
+version: 1
+project:
+  title: Algebraic Geometry Notes
+  authors:
+    - name: <a href="https://m4tt.willi4ms.ca" target="_blank">M. Williams</a>
+  copyright: '2025'
+  github: m4tt-willi4ms/ag_notes
+  bibliography:
+    - references.bib
+  exports:
+    - format: pdf
+      template: plain_latex_book
+      output: exports/book.pdf
+  toc:
+    - file: index.md
+    - file: polyinvars.ipynb
+    - file: tetra.ipynb
+    - file: octahedral.ipynb
+    - file: icosahedron.ipynb
+    - file: dodeca.ipynb
+    - file: solving_quintics.ipynb
+    - file: hypergeom.ipynb
+    - file: bibliography.md
+site:
+  options:
+    favicon: _static/favicon.ico
+    folders: true
+  template: book-theme
